@@ -16,5 +16,3 @@ input_pickable = true
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="P3-tiles2/KinematicBody2D"]
 polygon = PoolVector2Array( 0, -122, 165, -1, 0, 120, -165, 0 )
-
-[connection signal="input_event" from="P3-tiles2/KinematicBody2D" to="." method="_on_KinematicBody2D_input_event"]

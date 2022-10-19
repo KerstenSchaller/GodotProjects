@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class BigRomb : Dragable
+public class BigRomb : Node2D
 {
 
 /*
@@ -26,7 +26,12 @@ public class BigRomb : Dragable
 	{
 		GD.Print(this.Name);
 		GD.Print(this.GetPath());
+		
 		base._Ready();
+
+		var dragable = new Dragable();
+		dragable.overrideChild(this);
+		AddChild(dragable);
 	}
 
 //  // Called every frame. 'delta' is the elapsed time since the previous frame.

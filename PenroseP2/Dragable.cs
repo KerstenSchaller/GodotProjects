@@ -3,17 +3,37 @@ using System;
 
 public class Dragable : Node2D
 {
+
+
 	bool isPickedUp = false;
+	Node2D parent;
 	KinematicBody2D childKinematicBody;
+
+	bool isAncestor  = true;
 
 	public override void _Ready()
 	{
-		//var children =  this.GetChildren();
 		KinematicBody2D child = this.recurseGetNode(this);
 		if (child is KinematicBody2D)
 		{
 			childKinematicBody = child;
+			childKinematicBody.Connect("input_event", this, nameof(_on_KinematicBody2D_input_event));
 		}
+	}
+
+
+
+	public void overrideChild(Node2D node)
+	{
+		parent = node;
+		KinematicBody2D child = this.recurseGetNode(node);
+		if (child is KinematicBody2D)
+		{
+			childKinematicBody = child;
+			childKinematicBody.Connect("input_event", this, nameof(_on_KinematicBody2D_input_event));
+			isAncestor = false; // is overriden means no ancestry(not used to inherit from)
+		}
+
 	}
 
 	KinematicBody2D recurseGetNode(Node2D node)
@@ -47,17 +67,24 @@ public class Dragable : Node2D
 		
 	}
 
+
 	public override void _Input(InputEvent @event)
 	{
-
-
 		if (@event is InputEventMouseMotion eventMouseMotion)
 		{
 			if (isPickedUp)
 			{
-				//childKinematicBody.MoveAndSlide(eventMouseMotion.Position);
-				//childKinematicBody.MoveAndSlide(eventMouseMotion.Position);
-				this.Position = eventMouseMotion.Position;
+				GD.Print("moving Node");
+				
+				// the target object is different if this class was inherited rather than instanciated
+				if(isAncestor)
+				{
+					this.Position = eventMouseMotion.Position;
+				}
+				else
+				{
+					((Node2D)GetParent()).Position = eventMouseMotion.Position;
+				}
 			}
 		}
 
