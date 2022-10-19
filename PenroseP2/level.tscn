@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://BigRomb.tscn" type="PackedScene" id=1]
+[ext_resource path="res://SmallRomb.tscn" type="PackedScene" id=2]
+[ext_resource path="res://level.cs" type="Script" id=3]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="BigRomb" parent="." instance=ExtResource( 1 )]
+position = Vector2( 177, 108 )
+scale = Vector2( 0.5, 0.5 )
+
+[node name="SmallRomb" parent="." instance=ExtResource( 2 )]
+position = Vector2( 500, 289 )
+scale = Vector2( 0.5, 0.5 )
