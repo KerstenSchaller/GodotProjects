@@ -49,8 +49,8 @@ public class level : Node2D
 				var randomInt =  GD.Randi() % 2;
 				if(randomInt == 1)
 				{
-					var bigRombScene = (PackedScene)ResourceLoader.Load("res://BigRomb.tscn");
-					BigRomb newChild = (BigRomb)bigRombScene.Instance();
+					var bigRombScene = ResourceLoader.Load("res://BigRomb.tscn") as PackedScene;
+					BigRomb newChild = bigRombScene.Instance() as BigRomb;
 					newChild.Position = pos;
 					newChild.Scale = new Vector2(scale,scale);
 					this.AddChild(newChild);
@@ -58,8 +58,8 @@ public class level : Node2D
 				}
 				else
 				{
-					var smallRombScene = (PackedScene)ResourceLoader.Load("res://SmallRomb.tscn");
-					SmallRomb newChild = (SmallRomb)smallRombScene.Instance();
+					var smallRombScene = ResourceLoader.Load("res://SmallRomb.tscn") as PackedScene;
+					SmallRomb newChild = smallRombScene.Instance() as SmallRomb;
 					newChild.Position = pos;
 					newChild.Scale = new Vector2(scale,scale);
 					this.AddChild(newChild);
@@ -70,7 +70,7 @@ public class level : Node2D
 			}
 		}
 
-		if(@event.IsActionReleased("mouse_button_left"))
+		if(@event.IsActionReleased("mouse_button_right"))
 		{
 		}
 

@@ -9,7 +9,7 @@ script = ExtResource( 3 )
 
 [node name="BigRomb" parent="." instance=ExtResource( 1 )]
 position = Vector2( 145, 220 )
-scale = Vector2( 0.1, 0.5 )
+scale = Vector2( 0.5, 0.5 )
 
 [node name="SmallRomb" parent="." instance=ExtResource( 2 )]
 position = Vector2( 394, 227 )
