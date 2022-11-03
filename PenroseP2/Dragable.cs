@@ -1,39 +1,28 @@
 using Godot;
 using System;
 
-public class Dragable : Node2D
+public class Dragable : KinematicBody2D
 {
 
 
 	bool isPickedUp = false;
-	Node2D parent;
+	KinematicBody2D parent;
 	KinematicBody2D childKinematicBody;
 
 	bool isAncestor  = true;
 
 	public override void _Ready()
 	{
-		KinematicBody2D child = this.recurseGetNode(this);
-		if (child is KinematicBody2D)
-		{
-			childKinematicBody = child;
-			childKinematicBody.Connect("input_event", this, nameof(_on_KinematicBody2D_input_event));
-		}
+		this.Connect("input_event", this, nameof(_on_KinematicBody2D_input_event));
 	}
 
 
 
-	public void overrideChild(Node2D node)
+	public void overrideChild(KinematicBody2D node)
 	{
 		parent = node;
-		KinematicBody2D child = this.recurseGetNode(node);
-		if (child is KinematicBody2D)
-		{
-			childKinematicBody = child;
-			childKinematicBody.Connect("input_event", this, nameof(_on_KinematicBody2D_input_event));
-			isAncestor = false; // is overriden means no ancestry(not used to inherit from)
-		}
-
+		parent.Connect("input_event", this, nameof(_on_KinematicBody2D_input_event));
+		isAncestor = false; // is overriden means no ancestry(not used to inherit from)
 	}
 
 	KinematicBody2D recurseGetNode(Node2D node)
@@ -57,14 +46,12 @@ public class Dragable : Node2D
 	public void _on_KinematicBody2D_input_event(object viewport, object @event, int shape_idx)
 	{
 		var inputEvent = @event as InputEventMouse;
-		//GD.Print("Hovering node");
+		//GD.Print("Collision Occured");
 		if(inputEvent.IsActionPressed("mouse_button_left"))
 		{
 			isPickedUp = true;
-			GD.Print("clicked Node");
-		}
-
-		
+			//GD.Print("clicked Node");
+		}	
 	}
 
 
@@ -74,16 +61,19 @@ public class Dragable : Node2D
 		{
 			if (isPickedUp)
 			{
-				GD.Print("moving Node");
+				//GD.Print("moving Node");
 				
 				// the target object is different if this class was inherited rather than instanciated
+				
 				if(isAncestor)
 				{
 					this.Position = eventMouseMotion.Position;
+					//this.MoveAndSlide(eventMouseMotion.Position);
 				}
 				else
 				{
-					((Node2D)GetParent()).Position = eventMouseMotion.Position;
+					parent.Position = eventMouseMotion.Position;
+					//parent.MoveAndSlide(eventMouseMotion.Position);
 				}
 			}
 		}
@@ -91,7 +81,7 @@ public class Dragable : Node2D
 		if(@event.IsActionReleased("mouse_button_left"))
 		{
 			isPickedUp = false;
-			GD.Print("released Node");
+			//GD.Print("released Node");
 		}
 
 	}
