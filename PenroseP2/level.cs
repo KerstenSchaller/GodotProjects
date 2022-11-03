@@ -3,8 +3,9 @@ using System;
 
 public class level : Node2D
 {
-	private float scale;
+	private float scale = 0.3f;
 
+/*
 	[Export(PropertyHint.Range, "0,10,0.1")]
 	public float _Scale
 	{
@@ -14,6 +15,7 @@ public class level : Node2D
 			setScaleOfChilds(scale);
 			}
 	}
+*/
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -75,4 +77,5 @@ public class level : Node2D
 		}
 
 	}
-}
+	  
+  }

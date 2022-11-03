@@ -61,7 +61,6 @@ public class Dragable : KinematicBody2D
 		{
 			if (isPickedUp)
 			{
-				//GD.Print("moving Node");
 				
 				// the target object is different if this class was inherited rather than instanciated
 				
@@ -90,6 +89,26 @@ public class Dragable : KinematicBody2D
 	public override void _Process(float delta)
 	{
 
+	}
+
+	public override void _PhysicsProcess(float delta)
+	{
+
+		if(Input.IsActionPressed("Rotate"))
+		{
+			if(isPickedUp)
+			{
+				GD.Print("rotate");				
+				if(isAncestor)
+				{
+					this.RotationDegrees = this.RotationDegrees + 360f/60;
+				}
+				else
+				{
+					parent.RotationDegrees = parent.RotationDegrees + 360f/60;
+				}
+			}
+		}
 	}
 
 }
