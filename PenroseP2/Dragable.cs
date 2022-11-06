@@ -16,8 +16,6 @@ public class Dragable : KinematicBody2D
 		this.Connect("input_event", this, nameof(_on_KinematicBody2D_input_event));
 	}
 
-
-
 	public void overrideChild(KinematicBody2D node)
 	{
 		parent = node;

@@ -3,15 +3,14 @@ using System;
 
 public class SmallRomb : Dragable
 {
-	// Declare member variables here. Examples:
-	// private int a = 2;
-	// private string b = "text";
-
 	public override void _Ready()
 	{
 		GD.Print(this.Name);
 		GD.Print(this.GetPath());
 		base._Ready();
+
+		CollisionPolygon2D collisionPoly = GetNode<CollisionPolygon2D>("CollisionPolygon2D");
+		collisionPoly.Polygon = KiteAndDart.getDartVertices().ToArray();
 	}
 
 

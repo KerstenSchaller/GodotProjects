@@ -17,6 +17,9 @@ public class BigRomb : KinematicBody2D
 		var dragable = new Dragable();
 		dragable.overrideChild(this);
 		AddChild(dragable);
+
+		CollisionPolygon2D collisionPoly = GetNode<CollisionPolygon2D>("CollisionPolygon2D");
+		collisionPoly.Polygon = KiteAndDart.getKiteVertices().ToArray();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
