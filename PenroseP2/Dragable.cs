@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class Dragable : KinematicBody2D
+public class Dragable : Node2D
 {
 
 
@@ -9,18 +9,14 @@ public class Dragable : KinematicBody2D
 	KinematicBody2D parent;
 	KinematicBody2D childKinematicBody;
 
-	bool isAncestor  = true;
-
 	public override void _Ready()
 	{
-		this.Connect("input_event", this, nameof(_on_KinematicBody2D_input_event));
 	}
 
 	public void overrideChild(KinematicBody2D node)
 	{
 		parent = node;
 		parent.Connect("input_event", this, nameof(_on_KinematicBody2D_input_event));
-		isAncestor = false; // is overriden means no ancestry(not used to inherit from)
 	}
 
 	KinematicBody2D recurseGetNode(Node2D node)
@@ -44,11 +40,9 @@ public class Dragable : KinematicBody2D
 	public void _on_KinematicBody2D_input_event(object viewport, object @event, int shape_idx)
 	{
 		var inputEvent = @event as InputEventMouse;
-		//GD.Print("Collision Occured");
 		if(inputEvent.IsActionPressed("mouse_button_left"))
 		{
 			isPickedUp = true;
-			//GD.Print("clicked Node");
 		}	
 	}
 
@@ -59,19 +53,8 @@ public class Dragable : KinematicBody2D
 		{
 			if (isPickedUp)
 			{
-				
-				// the target object is different if this class was inherited rather than instanciated
-				
-				if(isAncestor)
-				{
-					this.Position = eventMouseMotion.Position;
-					//this.MoveAndSlide(eventMouseMotion.Position);
-				}
-				else
-				{
-					parent.Position = eventMouseMotion.Position;
-					//parent.MoveAndSlide(eventMouseMotion.Position);
-				}
+				parent.Position = eventMouseMotion.Position;
+				//parent.MoveAndSlide(eventMouseMotion.Position);
 			}
 		}
 
@@ -97,14 +80,8 @@ public class Dragable : KinematicBody2D
 			if(isPickedUp)
 			{
 				GD.Print("rotate");				
-				if(isAncestor)
-				{
-					this.RotationDegrees = this.RotationDegrees + 360f/60;
-				}
-				else
-				{
-					parent.RotationDegrees = parent.RotationDegrees + 360f/60;
-				}
+				parent.RotationDegrees = parent.RotationDegrees + 360f/60;
+				
 			}
 		}
 	}
