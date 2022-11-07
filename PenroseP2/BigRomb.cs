@@ -5,6 +5,8 @@ public class BigRomb : KinematicBody2D
 {
 
 	float speed = 0;
+	CollisionPolygon2D collisionPoly;
+
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -18,7 +20,7 @@ public class BigRomb : KinematicBody2D
 		dragable.overrideChild(this);
 		AddChild(dragable);
 
-		CollisionPolygon2D collisionPoly = GetNode<CollisionPolygon2D>("CollisionPolygon2D");
+		collisionPoly = GetNode<CollisionPolygon2D>("CollisionPolygon2D");
 		collisionPoly.Polygon = KiteAndDart.getKiteVertices().ToArray();
 	}
 
@@ -32,6 +34,12 @@ public class BigRomb : KinematicBody2D
 			GD.Print("Collided");
 		   // var collisionPoint = collisionInfo.GetPosition();
 		}
+		this.Update();
+	}
+
+	public override void _Draw()
+	{
+		DrawColoredPolygon(collisionPoly.Polygon, Colors.Aqua);
 	}
 
 }

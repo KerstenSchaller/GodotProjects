@@ -49,7 +49,7 @@ public static class KiteAndDart
 		vertices.Add( kiteVertices[3]);
 
 		//shift to origin
-		var xShift = vertices[2].x/2;
+		var xShift = vertices[0].x/2;
 
 		List<Vector2> shiftedVertices = new List<Vector2>();
 		for(int i=0;i<vertices.Count;i++)
