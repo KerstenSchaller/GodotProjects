@@ -8,7 +8,7 @@
 script = ExtResource( 3 )
 
 [node name="BigRomb" parent="." instance=ExtResource( 1 )]
-position = Vector2( 145, 220 )
+position = Vector2( 5, 3 )
 scale = Vector2( 0.3, 0.3 )
 
 [node name="SmallRomb" parent="." instance=ExtResource( 2 )]

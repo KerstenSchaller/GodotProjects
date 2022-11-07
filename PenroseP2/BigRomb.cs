@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Runtime.InteropServices;
 
 public class BigRomb : KinematicBody2D
 {
@@ -7,6 +8,7 @@ public class BigRomb : KinematicBody2D
 	float speed = 0;
 	CollisionPolygon2D collisionPoly;
 
+	CollisionPolygon2D getPoly (){return collisionPoly;}
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -18,11 +20,12 @@ public class BigRomb : KinematicBody2D
 
 		var dragable = new Dragable();
 		dragable.overrideChild(this);
-		AddChild(dragable);
+        AddChild(dragable);
 
-		collisionPoly = GetNode<CollisionPolygon2D>("CollisionPolygon2D");
-		collisionPoly.Polygon = KiteAndDart.getKiteVertices().ToArray();
-	}
+        collisionPoly = new CollisionPolygon2D();
+        collisionPoly.Polygon = KiteAndDart.getKiteVertices().ToArray();
+		this.AddChild(collisionPoly);
+    }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(float delta)

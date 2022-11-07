@@ -1,10 +1,11 @@
 using Godot;
 using System;
 
-public class SmallRomb : Dragable
+public class SmallRomb : KinematicBody2D
 {
 
 	CollisionPolygon2D collisionPoly;
+	float speed = 0;
 
 	public override void _Ready()
 	{
@@ -12,16 +13,31 @@ public class SmallRomb : Dragable
 		GD.Print(this.GetPath());
 		base._Ready();
 
-		collisionPoly = GetNode<CollisionPolygon2D>("CollisionPolygon2D");
+		var dragable = new Dragable();
+		dragable.overrideChild(this);
+		AddChild(dragable);
+
+		collisionPoly = new CollisionPolygon2D();
 		collisionPoly.Polygon = KiteAndDart.getDartVertices().ToArray();
-		GD.Print("1" + KiteAndDart.getDartVertices().ToArray().ToString());
+		this.AddChild(collisionPoly);
 	}
 
+
+	public override void _Process(float delta)
+	{
+		Vector2 velocity = new Vector2(speed,0);
+		var collisionInfo = MoveAndCollide(velocity * delta);
+		if (collisionInfo != null)
+		{
+			GD.Print("Collided");
+		   // var collisionPoint = collisionInfo.GetPosition();
+		}
+		this.Update();
+	}
 
 	public override void _Draw()
 	{
 		DrawColoredPolygon(collisionPoly.Polygon, Colors.Aqua);
-		GD.Print("2" + collisionPoly.Polygon.ToString());
 	}
 }
 
