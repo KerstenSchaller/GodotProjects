@@ -43,6 +43,28 @@ public class PatternPolygon : Node2D
 		}
 	}
 
+	float offset;
+	public float Offset
+	{
+		get { return offset; }
+		set
+		{
+			offset = value;
+			for (int i = 0; i < hankinLines.Count; i++)
+			{
+				if (i % 2 == 0)
+				{
+					hankinLines[i].Offset = -value;
+
+				}
+				else
+				{
+					hankinLines[i].Offset = value;
+				}
+			}
+		}
+	}
+
 	void addHankinsLines()
 	{
 		GD.Print("addHankinsLines");
@@ -52,10 +74,10 @@ public class PatternPolygon : Node2D
 			var midY = (vertices[i].y + vertices[i + 1].y) / 2;
 			var baseAngle = -(float)Math.PI/2 + (float)Math.Atan2(vertices[i].y - vertices[i + 1].y,vertices[i].x - vertices[i + 1].x);
 			var hankinLine1 = new HankinLine();
-			hankinLine1.init(new Vector2(midX, midY), hankinsAngle, baseAngle);
+			hankinLine1.init(new Vector2(midX, midY),0, hankinsAngle, baseAngle);
 			hankinLines.Add(hankinLine1);
 			var hankinLine2 = new HankinLine();
-			hankinLine2.init(new Vector2(midX, midY), -hankinsAngle, baseAngle);
+			hankinLine2.init(new Vector2(midX, midY),0, -hankinsAngle, baseAngle);
 			hankinLines.Add(hankinLine2);
 			this.AddChild(hankinLine1);
 			this.AddChild(hankinLine2);
@@ -68,7 +90,7 @@ public class PatternPolygon : Node2D
 			var midY2 = (vertices[vertices.Count - 1].y + vertices[0].y) / 2;
 			var baseAngle2 = (float)Math.PI/2 + (float)Math.Atan2(vertices[0].y - vertices[vertices.Count - 1].y, vertices[0].x - vertices[vertices.Count - 1].x);
 			var hankinLineX = new HankinLine();
-			hankinLineX.init(new Vector2(midX2, midY2), hankinsAngle, baseAngle2);
+			hankinLineX.init(new Vector2(midX2, midY2),0, hankinsAngle, baseAngle2);
 			hankinLines.Add(hankinLineX);
 			this.AddChild(hankinLineX);
 		}

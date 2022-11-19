@@ -10,6 +10,8 @@ public class HankinLine : Node2D
 	float angleRad;
 	float baseAngleRad;
 
+	float offset;
+
 
 
 	Vector2 intersectionPoint = new Vector2(0,0);
@@ -34,11 +36,21 @@ public class HankinLine : Node2D
         {
 			//GD.Print("initinit: " + angleRad);
             angleDeg = value;
-            init(point, angleDeg, baseAngleRad);
+            init(point, offset, angleDeg, baseAngleRad);
         } 
 	}
 
-	public void calcIntersection()
+    public float Offset
+    {
+        get { return offset; }
+        set
+        {
+            offset = value;
+            init(point, offset, angleDeg, baseAngleRad);
+        }
+    }
+
+    public void calcIntersection()
 	{
 		if(neighbour == null)return;
 
@@ -71,11 +83,14 @@ public class HankinLine : Node2D
         Update();
     }
 
-	public void init(Vector2 _point, float _angleDeg, float _baseAngleRad)
+	public void init(Vector2 _point,float _offset, float _angleDeg, float _baseAngleRad)
 	{
 
-		point = _point;
 		baseAngleRad = _baseAngleRad;
+
+		//shift point by offset
+		Vector2 vShift = new Vector2((float)Math.Cos(_baseAngleRad),(float)Math.Sin(_baseAngleRad))*_offset;
+		point = _point + vShift;
 		angleRad = baseAngleRad + _angleDeg * (float)Math.PI/180;
 	}
 
@@ -88,7 +103,7 @@ public class HankinLine : Node2D
 
 		var x = (float)Math.Cos(angleRad);
 		var y = (float)Math.Sin(angleRad);
-		DrawLine(point, intersectionPoint, Colors.White,2);
+		DrawLine(point, intersectionPoint, Colors.White,1);
 		//DrawLine(point, point +  new Vector2(x,y)*50, Colors.Violet);
 	}	
 } 

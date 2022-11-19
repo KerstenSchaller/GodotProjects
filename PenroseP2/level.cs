@@ -4,24 +4,27 @@ using System.Collections.Generic;
 
 public class level : Node2D
 {
+	List<PatternPolygon> polygons = new List<PatternPolygon>();
 	private float scale = 0.3f;
 
-	/*
-		[Export(PropertyHint.Range, "0,10,0.1")]
-		public float _Scale
+	float offset = 50f;
+	[Export(PropertyHint.Range, "0,25,1.1")]
+	public float exOffset
+	{
+		get { return offset; }
+		set
 		{
-			get{return scale;}
-			set{
-				scale = value;
-				setScaleOfChilds(scale);
-				}
-		}
-	*/
+			foreach(var p in polygons)
+			{
+				p.Offset = value;
+			}
 
-	List<PatternPolygon> polygons = new List<PatternPolygon>();
+		}
+	}
+
 
 	float hankinsAngle = 50f;
-	[Export(PropertyHint.Range, "1,89,2")]
+	[Export(PropertyHint.Range, "1,89,1.1")]
 	public float exAngle
 	{
 		get { return hankinsAngle; }
