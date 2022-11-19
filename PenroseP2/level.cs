@@ -4,8 +4,11 @@ using System.Collections.Generic;
 
 public class level : Node2D
 {
-	List<PatternPolygon> polygons = new List<PatternPolygon>();
+	List<SquarePatternTile> polygons = new List<SquarePatternTile>();
 	private float scale = 0.3f;
+
+	float patternSize = 100f;
+
 
 	float offset = 0f;
 	[Export(PropertyHint.Range, "0,150,1.1")]
@@ -44,17 +47,20 @@ public class level : Node2D
 	{
 		GD.Randomize();
 
+		var size = GetViewport().Size;
 
+		var patternTileScene = ResourceLoader.Load("res://SquarePatternTile.tscn") as PackedScene;
 
-		var patternPolygonScene = ResourceLoader.Load("res://PatternPolygon.tscn") as PackedScene;
+		var limX = (int)((size.x/patternSize)+1);
 
-		for (int x = 0; x < 4; x++)
+		for (int x = 0; x < limX ; x++)
 		{
-			for (int y = 0; y < 3; y++)
+			for (int y = 0; y < (int)((size.y/patternSize)+1); y++)
 			{
 
-				PatternPolygon newChild = patternPolygonScene.Instance() as PatternPolygon;
-				newChild.Position = new Vector2(x*300f,y*300f);
+				SquarePatternTile newChild = patternTileScene.Instance() as SquarePatternTile;
+				newChild.init(100);
+				newChild.Position = new Vector2(x*patternSize,y*patternSize);
 				//newChild.Scale = new Vector2(0.1f, 0.1f);
 				this.AddChild(newChild);
 				polygons.Add(newChild);

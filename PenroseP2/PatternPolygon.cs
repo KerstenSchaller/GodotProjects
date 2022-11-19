@@ -8,20 +8,6 @@ public class PatternPolygon : Node2D
 	List<Vector2> vertices = new List<Vector2>();
 	List<HankinLine> hankinLines = new List<HankinLine>();
 
-	int size = 300;
-
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
-		vertices.Add(new Vector2(0,0));
-		vertices.Add(new Vector2(size,0));
-		vertices.Add(new Vector2(size,size));
-		vertices.Add(new Vector2(0,size));
-
-		addHankinsLines();
-
-	}
-
 	float hankinsAngle = 0f;
 	public float Angle
 	{
@@ -69,7 +55,7 @@ public class PatternPolygon : Node2D
 
 	void addHankinsLines()
 	{
-		GD.Print("addHankinsLines");
+		//GD.Print("addHankinsLines");
 		for (int i = 0; i < vertices.Count - 1; i++)
 		{
 			var midX = (vertices[i].x + vertices[i + 1].x) / 2;
@@ -133,15 +119,9 @@ public class PatternPolygon : Node2D
 		addHankinsLines();
 	}
 
-//  // Called every frame. 'delta' is the elapsed time since the previous frame.
-//  public override void _Process(float delta)
-//  {s
-//      
-//  }
-
 	public override void _Draw()
 	{
-		if (true)
+		if (false)
 		{
 			for (int i = 0; i < vertices.Count - 1; i++)
 			{

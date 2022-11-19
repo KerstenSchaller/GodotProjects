@@ -114,7 +114,7 @@ public class HankinLine : Node2D
 		var x = (float)Math.Cos(angleRad);
 		var y = (float)Math.Sin(angleRad);
 		DrawLine(shiftedPoint, intersectionPoint, Colors.White,1);
-		DrawCircle(intersectionPoint,3f ,Colors.IndianRed);
+		//DrawCircle(intersectionPoint,3f ,Colors.IndianRed);
 		//DrawLine(point, point +  new Vector2(x,y)*50, Colors.Violet);
 	}	
 } 
