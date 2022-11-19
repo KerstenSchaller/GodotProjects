@@ -31,12 +31,13 @@ public class HankinLine : Node2D
 		get{return shiftedPoint;}
 	}
 
+	public float AngleRad{get{return angleRad;}}
+
 	public float Angle
 	{
-		get{return angleRad;}
+		get{return angleDeg;}//Bug, this should return
         set
         {
-			//GD.Print("initinit: " + angleRad);
             angleDeg = value;
             init(point, angleDeg, baseAngleRad);
         } 
@@ -66,8 +67,8 @@ public class HankinLine : Node2D
 
 		var x3 = neighbour.Point.x;
 		var y3 = neighbour.Point.y;
-		var x4 = x3 + (float)Math.Cos(neighbour.Angle);
-		var y4 = y3 + (float)Math.Sin(neighbour.Angle);
+		var x4 = x3 + (float)Math.Cos(neighbour.AngleRad);
+		var y4 = y3 + (float)Math.Sin(neighbour.AngleRad);
 
 		var nominator = (x4 - x3)*(y1-y3) - (y4-y3)*(x1-x3);
 		var denominator = (y4 - y3)*(x2-x1) - (x4-x3)*(y2-y1);
@@ -113,7 +114,7 @@ public class HankinLine : Node2D
 		var x = (float)Math.Cos(angleRad);
 		var y = (float)Math.Sin(angleRad);
 		DrawLine(shiftedPoint, intersectionPoint, Colors.White,1);
-		//DrawCircle(intersectionPoint,3f ,Colors.IndianRed);
+		DrawCircle(intersectionPoint,3f ,Colors.IndianRed);
 		//DrawLine(point, point +  new Vector2(x,y)*50, Colors.Violet);
 	}	
 } 
