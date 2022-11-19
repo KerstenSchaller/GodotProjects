@@ -7,8 +7,8 @@ public class level : Node2D
 	List<PatternPolygon> polygons = new List<PatternPolygon>();
 	private float scale = 0.3f;
 
-	float offset = 50f;
-	[Export(PropertyHint.Range, "0,25,1.1")]
+	float offset = 0f;
+	[Export(PropertyHint.Range, "0,150,1.1")]
 	public float exOffset
 	{
 		get { return offset; }
@@ -23,16 +23,17 @@ public class level : Node2D
 	}
 
 
-	float hankinsAngle = 50f;
+	float hankinsAngle = 75f;
 	[Export(PropertyHint.Range, "1,89,1.1")]
 	public float exAngle
 	{
 		get { return hankinsAngle; }
 		set
 		{
+			hankinsAngle = value;
 			foreach(var p in polygons)
 			{
-				p.exAngle = value;
+				p.Angle = value;
 			}
 
 		}
@@ -47,13 +48,13 @@ public class level : Node2D
 
 		var patternPolygonScene = ResourceLoader.Load("res://PatternPolygon.tscn") as PackedScene;
 
-		for (int x = 0; x < 20; x++)
+		for (int x = 0; x < 4; x++)
 		{
-			for (int y = 0; y < 15; y++)
+			for (int y = 0; y < 3; y++)
 			{
 
 				PatternPolygon newChild = patternPolygonScene.Instance() as PatternPolygon;
-				newChild.Position = new Vector2(x*50f,y*50f);
+				newChild.Position = new Vector2(x*300f,y*300f);
 				//newChild.Scale = new Vector2(0.1f, 0.1f);
 				this.AddChild(newChild);
 				polygons.Add(newChild);

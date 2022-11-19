@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class HankinLine : Node2D
 {
 	Vector2 point;
+	Vector2 shiftedPoint;
 
     float angleDeg;
 	float angleRad;
@@ -22,11 +23,12 @@ public class HankinLine : Node2D
 	{
 		neighbour = _neighbour;
 		calcIntersection();
+		Update();
 	}
 
 	public Vector2 Point
 	{
-		get{return point;}
+		get{return shiftedPoint;}
 	}
 
 	public float Angle
@@ -36,7 +38,7 @@ public class HankinLine : Node2D
         {
 			//GD.Print("initinit: " + angleRad);
             angleDeg = value;
-            init(point, offset, angleDeg, baseAngleRad);
+            init(point, angleDeg, baseAngleRad);
         } 
 	}
 
@@ -46,7 +48,8 @@ public class HankinLine : Node2D
         set
         {
             offset = value;
-            init(point, offset, angleDeg, baseAngleRad);
+            //init(point, angleDeg, baseAngleRad);
+			shiftPoint(offset);
         }
     }
 
@@ -56,8 +59,8 @@ public class HankinLine : Node2D
 
 		//http://paulbourke.net/geometry/pointlineplane/
 
-		var x1 = point.x;
-		var y1 = point.y;
+		var x1 = shiftedPoint.x;
+		var y1 = shiftedPoint.y;
 		var x2 = x1 + (float)Math.Cos(angleRad);
 		var y2 = y1 + (float)Math.Sin(angleRad);
 
@@ -75,7 +78,7 @@ public class HankinLine : Node2D
 
 		intersectionPoint = new Vector2(xIntersect,yIntersect);
 
-
+ 
 	}
 
     public override void _Process(float delta)
@@ -83,14 +86,20 @@ public class HankinLine : Node2D
         Update();
     }
 
-	public void init(Vector2 _point,float _offset, float _angleDeg, float _baseAngleRad)
+	void shiftPoint(float _offset)
+	{
+		//shift point by offset
+		var turnedAngle = baseAngleRad + (float)Math.PI/2;
+		Vector2 vShift = new Vector2((float)Math.Cos(turnedAngle),(float)Math.Sin(turnedAngle))*_offset;
+		shiftedPoint = point + vShift;
+	}
+
+	public void init(Vector2 _point, float _angleDeg, float _baseAngleRad)
 	{
 
 		baseAngleRad = _baseAngleRad;
 
-		//shift point by offset
-		Vector2 vShift = new Vector2((float)Math.Cos(_baseAngleRad),(float)Math.Sin(_baseAngleRad))*_offset;
-		point = _point + vShift;
+		point = _point;
 		angleRad = baseAngleRad + _angleDeg * (float)Math.PI/180;
 	}
 
@@ -103,7 +112,8 @@ public class HankinLine : Node2D
 
 		var x = (float)Math.Cos(angleRad);
 		var y = (float)Math.Sin(angleRad);
-		DrawLine(point, intersectionPoint, Colors.White,1);
+		DrawLine(shiftedPoint, intersectionPoint, Colors.White,1);
+		//DrawCircle(intersectionPoint,3f ,Colors.IndianRed);
 		//DrawLine(point, point +  new Vector2(x,y)*50, Colors.Violet);
 	}	
 } 
