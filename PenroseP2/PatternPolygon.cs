@@ -59,7 +59,6 @@ public class PatternPolygon : Node2D
 
 	void addHankinsLines()
 	{
-		//GD.Print("addHankinsLines");
 		for (int i = 0; i < vertices.Count - 1; i++)
 		{
 			var midX = (vertices[i].x + vertices[i + 1].x) / 2;

@@ -18,7 +18,6 @@ public class HankinLine : Node2D
 	{
 		List<Vector2> retval = new List<Vector2>();
 		retval.Add(shiftedPoint);
-		//retval.Add( new Vector2(shiftedPoint.x +(float)Math.Cos(angleRad),shiftedPoint.y + (float)Math.Sin(angleRad)));
 		retval.Add(intersectionPoint);
 		return retval;
 	}
@@ -92,12 +91,8 @@ public class HankinLine : Node2D
 
 		intersectionPoint = PolygonDetectionAlgorithm.calcIntersection(this.shiftedPoint, this.angleRad, neighbour.Point, neighbour.AngleRad);
 
-		//GD.Print("angle:" + angleRad * 180/Math.PI);
-
 		var x = (float)Math.Cos(angleRad);
 		var y = (float)Math.Sin(angleRad);
 		DrawLine(shiftedPoint, intersectionPoint, Colors.White,1);
-		//DrawCircle(intersectionPoint,3f ,Colors.IndianRed);
-		//DrawLine(point, point +  new Vector2(x,y)*50, Colors.Violet);
 	}	
 } 
