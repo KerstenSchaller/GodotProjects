@@ -6,6 +6,9 @@ public class PolygonDetectionAlgorithm : Node2D
 {
     List<List<Vector2>> lines = new List<List<Vector2>>();
     List<HankinLine> hankinLines = new List<HankinLine>();
+    List<List<Vector2>> enclosingPolygon = new List<List<Vector2>>();
+
+    List<Vector2> intersections = new List<Vector2>();
 
     public void addLine(List<Vector2> line)
     {
@@ -22,6 +25,13 @@ public class PolygonDetectionAlgorithm : Node2D
         hankinLines.AddRange(_lines);
     }
 
+    public void addEnclosingPoly(List<List<Vector2>> poly)
+    {
+        //return;
+        enclosingPolygon = poly;
+        lines.AddRange(poly);
+    }
+
     //*******************************************************************************
     //*******************************************************************************
     // ALGO
@@ -32,22 +42,28 @@ public class PolygonDetectionAlgorithm : Node2D
     // 2. Removing line segment intersections
     public List<Vector2> detectIntersectionPoints(bool useHankin = true)
     {
+        List<List<Vector2>> localLines = new List<List<Vector2>>(); 
         if(useHankin)
         {
-            lines.Clear();
             foreach(var l in hankinLines)
             {
-                lines.Add(l.toList());
+                localLines.Add(l.toList());
             }
         }
-        List<Vector2> intersections = new List<Vector2>();
-        for (int i = 0; i < lines.Count; i++)
+
+        if(true)// if enclosing poly is used
         {
-            for (int j = 0; j < lines.Count; j++)
+            localLines.AddRange(enclosingPolygon);
+        }
+
+        List<Vector2> intersections = new List<Vector2>();
+        for (int i = 0; i < localLines.Count; i++)
+        {
+            for (int j = 0; j < localLines.Count; j++)
             {
                 if(i==j)continue;
                 bool outlier = false;
-                var intersection = PolygonDetectionAlgorithm.calcIntersection(lines[i], lines[j], ref outlier);
+                var intersection = PolygonDetectionAlgorithm.calcIntersection(localLines[i], localLines[j], ref outlier);
                 if(!outlier)
                 {
                     intersections.Add(intersection);
@@ -85,31 +101,33 @@ public class PolygonDetectionAlgorithm : Node2D
 	{
 		//http://paulbourke.net/geometry/pointlineplane/
 
-		var x1 = l1[0].x;
-		var y1 = l1[0].y;
+		double x1 = l1[0].x;
+		double y1 = l1[0].y;
 
-		var x2 = l1[1].x;
-		var y2 = l1[1].y;
+		double x2 = l1[1].x;
+		double y2 = l1[1].y;
 
-		var x3 = l2[0].x;
-		var y3 = l2[0].y;
+		double x3 = l2[0].x;
+		double y3 = l2[0].y;
 
-		var x4 = l2[1].x;
-		var y4 = l2[1].y;
+		double x4 = l2[1].x;
+		double y4 = l2[1].y;
 
-		var nominatorUA = (x4 - x3)*(y1-y3) - (y4-y3)*(x1-x3);
-		var denominatorUA = (y4 - y3)*(x2-x1) - (x4-x3)*(y2-y1);
-		var ua = nominatorUA/denominatorUA;
+		double nominatorUA = (x4 - x3)*(y1-y3) - (y4-y3)*(x1-x3);
+		double denominatorUA = (y4 - y3)*(x2-x1) - (x4-x3)*(y2-y1);
+		double ua = nominatorUA/denominatorUA;
 
-        var nominatorUB = (x2 - x1)*(y1-y3) - (y2-y1)*(x1-x3);
-		var denominatorUB = (y4 - y3)*(x2-x1) - (x4-x3)*(y2-y1);
-		var ub = nominatorUB/denominatorUB;
+        double nominatorUB = (x2 - x1)*(y1-y3) - (y2-y1)*(x1-x3);
+		double denominatorUB = (y4 - y3)*(x2-x1) - (x4-x3)*(y2-y1);
+		double ub = nominatorUB/denominatorUB;
 
-        var xIntersect = x1 + ua * (x2 - x1);
-        var yIntersect = y1 + ua * (y2 - y1);
+        double xIntersect = x1 + ua * (x2 - x1);
+        double yIntersect = y1 + ua * (y2 - y1);
 
         // check if intersection point lies outside original line segments
-        if (ua <= 1.01 && ua >= -0.01 && ub <= 1.01 && ub >= -0.01)
+        //if (ua <= 1.01 && ua >= -0.01 && ub <= 1.01 && ub >= -0.01)
+        if (ua <= 1 && ua >= 0 && ub <= 1 && ub >= 0)
+        
         {
             isFilterSegmentOutlier = false;
         }
@@ -117,24 +135,39 @@ public class PolygonDetectionAlgorithm : Node2D
         {
             isFilterSegmentOutlier = true;
         }
-        return new Vector2(xIntersect, yIntersect);
-
-
-
-
+        return new Vector2((float)xIntersect, (float)yIntersect);
     }
 
+    public void update()
+    {
+        intersections.Clear();
+        intersections = detectIntersectionPoints();
+        Update();
+    }
+
+
+    int cnt = 0;
     public override void _Process(float delta)
     {
+        // workaround because it seems that somethings odd in the order of process and draw are called
+        if(cnt == 100)
+        {   
+            this.update();
+            cnt = 0;
+        }
+        else
+        {
+            cnt++;
+        }
         Update();
+
     }
 
     public override void _Draw()
     {
-        var intersections = detectIntersectionPoints();
         foreach(var p in intersections)
         {
-            DrawCircle(p,5, Colors.Red);
+            DrawCircle( p ,5, Colors.Red);
         }
     }
 

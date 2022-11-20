@@ -8,8 +8,8 @@
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource( 3 )
-exOffset = 162.8
-exAngle = 20.9
+exOffset = 100.1
+exAngle = 12.1
 
 [node name="BigRomb" parent="." instance=ExtResource( 1 )]
 visible = false

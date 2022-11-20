@@ -8,7 +8,7 @@ public class PatternPolygon : Node2D
 	List<Vector2> vertices = new List<Vector2>();
 	List<HankinLine> hankinLines = new List<HankinLine>();
 
-
+	PolygonDetectionAlgorithm polyAlgo = new PolygonDetectionAlgorithm();
 
 	float hankinsAngle = 0f;
 	public float Angle
@@ -29,6 +29,7 @@ public class PatternPolygon : Node2D
 					hankinLines[i].Angle = -value;
 				}
 			}
+			polyAlgo.update();
 
 		}
 	}
@@ -52,6 +53,7 @@ public class PatternPolygon : Node2D
 					hankinLines[i].Offset = value;
 				}
 			}
+			polyAlgo.update();
 		}
 	}
 
@@ -119,9 +121,21 @@ public class PatternPolygon : Node2D
 		vertices.Clear();
 		vertices.AddRange( _vertices);
 		addHankinsLines();
-		var polyAlgo = new PolygonDetectionAlgorithm();
+		
 
+		// create enclosing poly as List<List<Vector2>>
+		List<List<Vector2>> ePoly = new List<List<Vector2>>();
+		for(int i=0;i<vertices.Count-1;i++)
+		{
+			ePoly.Add(new List<Vector2>(){vertices[i],vertices[i+1]});
+		}
+		ePoly.Add(new List<Vector2>(){vertices[vertices.Count - 1],vertices[0]});
+		polyAlgo.addEnclosingPoly(ePoly);
+
+		// add the henkinslines
 		polyAlgo.addHankinLines(hankinLines);
+		polyAlgo.update();
+
 		AddChild(polyAlgo);
 	}
 
