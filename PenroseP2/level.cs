@@ -7,7 +7,7 @@ public class level : Node2D
 	List<SquarePatternTile> polygons = new List<SquarePatternTile>();
 	private float scale = 0.3f;
 
-	float patternSize = 200f;
+	float patternSize = 100f;
 
 
 	float offset = 0f;
@@ -54,7 +54,7 @@ public class level : Node2D
 		var limX = (int)((size.x/patternSize)+1);
 		var limY = (int)((size.y/patternSize)+1);
 
-		if(true)
+		if(false)
 		{
 			limX = 1;
 			limY = 1;
