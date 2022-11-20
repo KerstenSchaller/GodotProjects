@@ -102,6 +102,7 @@ public class HankinLine : Node2D
 
 		point = _point;
 		angleRad = baseAngleRad + _angleDeg * (float)Math.PI/180;
+		shiftPoint(offset);
 	}
 
 	public override void _Draw()

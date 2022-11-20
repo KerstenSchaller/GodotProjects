@@ -121,7 +121,7 @@ public class PatternPolygon : Node2D
 
 	public override void _Draw()
 	{
-		if (false)
+		if (true)
 		{
 			for (int i = 0; i < vertices.Count - 1; i++)
 			{
