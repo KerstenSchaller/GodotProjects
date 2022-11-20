@@ -8,6 +8,8 @@ public class PatternPolygon : Node2D
 	List<Vector2> vertices = new List<Vector2>();
 	List<HankinLine> hankinLines = new List<HankinLine>();
 
+
+
 	float hankinsAngle = 0f;
 	public float Angle
 	{
@@ -117,11 +119,15 @@ public class PatternPolygon : Node2D
 		vertices.Clear();
 		vertices.AddRange( _vertices);
 		addHankinsLines();
+		var polyAlgo = new PolygonDetectionAlgorithm();
+
+		polyAlgo.addHankinLines(hankinLines);
+		AddChild(polyAlgo);
 	}
 
 	public override void _Draw()
 	{
-		if (false)
+		if (true)
 		{
 			for (int i = 0; i < vertices.Count - 1; i++)
 			{

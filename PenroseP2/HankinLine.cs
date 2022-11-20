@@ -14,7 +14,14 @@ public class HankinLine : Node2D
 
 	float offset;
 
-
+	public List<Vector2> toList()
+	{
+		List<Vector2> retval = new List<Vector2>();
+		retval.Add(shiftedPoint);
+		//retval.Add( new Vector2(shiftedPoint.x +(float)Math.Cos(angleRad),shiftedPoint.y + (float)Math.Sin(angleRad)));
+		retval.Add(intersectionPoint);
+		return retval;
+	}
 
 	Vector2 intersectionPoint = new Vector2(0,0);
 

@@ -11,7 +11,7 @@ public class level : Node2D
 
 
 	float offset = 0f;
-	[Export(PropertyHint.Range, "0,400,1.1")]
+	[Export(PropertyHint.Range, "0,600,1.1")]
 	public float exOffset
 	{
 		get { return offset; }
@@ -54,11 +54,11 @@ public class level : Node2D
 		var limX = (int)((size.x/patternSize)+1);
 		var limY = (int)((size.y/patternSize)+1);
 
-		if(false)
+		if(true)
 		{
 			limX = 1;
 			limY = 1;
-			patternSize = 400;
+			patternSize = 550;
 		}
 
 		for (int x = 0; x < limX ; x++)
