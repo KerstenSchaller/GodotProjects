@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
+
 public class HankinLine : Node2D
 {
 	Vector2 point;
@@ -22,7 +23,7 @@ public class HankinLine : Node2D
 	public void addNeighbour(HankinLine _neighbour)
 	{
 		neighbour = _neighbour;
-		calcIntersection();
+		intersectionPoint = PolygonDetectionAlgorithm.calcIntersection(this.shiftedPoint, this.angleRad, neighbour.Point, neighbour.AngleRad);
 		Update();
 	}
 
@@ -54,33 +55,6 @@ public class HankinLine : Node2D
         }
     }
 
-    public void calcIntersection()
-	{
-		if(neighbour == null)return;
-
-		//http://paulbourke.net/geometry/pointlineplane/
-
-		var x1 = shiftedPoint.x;
-		var y1 = shiftedPoint.y;
-		var x2 = x1 + (float)Math.Cos(angleRad);
-		var y2 = y1 + (float)Math.Sin(angleRad);
-
-		var x3 = neighbour.Point.x;
-		var y3 = neighbour.Point.y;
-		var x4 = x3 + (float)Math.Cos(neighbour.AngleRad);
-		var y4 = y3 + (float)Math.Sin(neighbour.AngleRad);
-
-		var nominator = (x4 - x3)*(y1-y3) - (y4-y3)*(x1-x3);
-		var denominator = (y4 - y3)*(x2-x1) - (x4-x3)*(y2-y1);
-
-		var ua = nominator/denominator;
-		var xIntersect = x1 + ua*(x2-x1);
-		var yIntersect = y1 + ua*(y2-y1);
-
-		intersectionPoint = new Vector2(xIntersect,yIntersect);
-
- 
-	}
 
     public override void _Process(float delta)
     {
@@ -108,7 +82,8 @@ public class HankinLine : Node2D
 	public override void _Draw()
 	{
 		if(neighbour == null)return;
-        calcIntersection();
+
+		intersectionPoint = PolygonDetectionAlgorithm.calcIntersection(this.shiftedPoint, this.angleRad, neighbour.Point, neighbour.AngleRad);
 
 		//GD.Print("angle:" + angleRad * 180/Math.PI);
 
