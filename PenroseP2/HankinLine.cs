@@ -10,7 +10,7 @@ public class HankinLine : Node2D
 
 	Vector2 endPoint;
 
-    float angleDeg;
+	float angleDeg;
 	float angleRad;
 	float baseAngleRad;
 
@@ -31,7 +31,7 @@ public class HankinLine : Node2D
 	public void addNeighbour(HankinLine _neighbour)
 	{
 		neighbour = _neighbour;
-		intersectionPoint = PolygonDetectionAlgorithm.calcIntersection(this.shiftedPoint, this.angleRad, neighbour.Point, neighbour.AngleRad);
+		intersectionPoint = LineHelper.calcIntersection(this.shiftedPoint, this.angleRad, neighbour.Point, neighbour.AngleRad);
 		Update();
 	}
 
@@ -45,30 +45,30 @@ public class HankinLine : Node2D
 	public float Angle
 	{
 		get{return angleDeg;}
-        set
-        {
-            angleDeg = value;
-            init(basePoint, angleDeg, baseAngleRad);
-        } 
+		set
+		{
+			angleDeg = value;
+			init(basePoint, angleDeg, baseAngleRad);
+		} 
 	}
 
-    public float Offset
-    {
-        get { return offset; }
-        set
-        {
-            offset = value;
-            //init(basePoint, angleDeg, baseAngleRad);
+	public float Offset
+	{
+		get { return offset; }
+		set
+		{
+			offset = value;
+			//init(basePoint, angleDeg, baseAngleRad);
 			shiftPoint(offset);
 			init(basePoint, angleDeg, baseAngleRad);
-        }
-    }
+		}
+	}
 
 
-    public override void _Process(float delta)
-    {
-        Update();
-    }
+	public override void _Process(float delta)
+	{
+		Update();
+	}
 
 	void shiftPoint(float _offset)
 	{
@@ -91,7 +91,7 @@ public class HankinLine : Node2D
 	{
 
 		if(neighbour == null)return;
-		intersectionPoint = PolygonDetectionAlgorithm.calcIntersection(this.shiftedPoint, this.angleRad, neighbour.Point, neighbour.AngleRad);
+		intersectionPoint = LineHelper.calcIntersection(this.shiftedPoint, this.angleRad, neighbour.Point, neighbour.AngleRad);
 
 		var x = (float)Math.Cos(angleRad);
 		var y = (float)Math.Sin(angleRad);
