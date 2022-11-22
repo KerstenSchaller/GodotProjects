@@ -51,6 +51,11 @@ public class Intersection
 
 		return item.position == this.position;
 	}
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 	
 
 
@@ -152,7 +157,7 @@ public class PolygonDetectionAlgorithm : Node2D
 
 			}
 		}
-		
+		findCycles();
 	}
 
 	public Intersection getIntersectionWithPos(Vector2 pos)
@@ -160,9 +165,56 @@ public class PolygonDetectionAlgorithm : Node2D
 		foreach(var ints in intersections)
 		{
 			if(ints.Position == pos)return ints;
-			return null;
 		}
 		return null;
+	}
+
+
+	void findCycles()
+	{
+		cycles.Clear();
+		foreach(var intersection in intersections)
+		{
+			currentCycle = new List<Intersection>();
+			foreach(var link in intersection.Links)
+			{
+				recurseLinks(getIntersectionWithPos(link), intersection);
+			}
+		}
+	}
+
+	Intersection currentIntersection;
+	List<List<Intersection>> cycles = new List<List<Intersection>>();
+	List<Intersection> currentCycle;
+	void recurseLinks(Intersection intersection, Intersection origin)
+	{
+		if(intersection == null){GD.Print("intersection == null");}
+
+		if(currentCycle.Contains(intersection))
+		{
+			// cycle found
+			cycles.Add(new List<Intersection>(currentCycle));
+			return;
+		}
+		else
+		{
+			currentCycle.Add(intersection);
+		}
+
+
+		// recurse again
+		foreach(var link in intersection.Links)
+		{
+			var intersectionLink = getIntersectionWithPos(link);
+			if(!intersectionLink.Equals(intersection))
+			{
+				// only recurse if link is not where we came from
+				recurseLinks(intersectionLink, intersection);
+			} 
+		}
+
+		currentCycle.Remove(intersection);
+
 	}
 
 
@@ -196,12 +248,36 @@ public class PolygonDetectionAlgorithm : Node2D
 
 	}
 
+	int i = 0;
+	int counter = 0 ; 
 	public override void _Draw()
 	{
 		foreach(var p in intersections)
 		{
 			DrawCircle( p.Position ,5, Colors.Red);
 		}
-	}
+
+        if (true)// print found polygons
+        {
+
+            if (counter < 50)
+            {
+                List<Vector2> cycle = new List<Vector2>();
+                foreach (var i in cycles[i])
+                {
+                    cycle.Add(i.Position);
+                }
+
+                DrawPolygon(cycle.ToArray(), new List<Color> { Colors.DarkBlue }.ToArray());
+                counter++;
+
+            }
+            else
+            {
+                counter = 0;
+                i++;
+            }
+        }
+    }
 
 }
