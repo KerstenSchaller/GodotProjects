@@ -101,21 +101,71 @@ public class PolygonDetectionAlgorithm : Node2D
 	// 2. Removing line segment intersections
 	public void detectIntersectionPoints(bool useHankin = true)
 	{
+		intersections.Clear();
 		List<List<Vector2>> localLines = new List<List<Vector2>>(); 
 		if(useHankin)
 		{
 			foreach(var l in hankinLines)
 			{
 				localLines.Add(l.toList());
+				var intersection = new Intersection(l.Point);
+
+                // add enclosing poly to links of hankin line origins
+                foreach (var el in enclosingPolygon)
+                {
+
+                    if (LineHelper.isPointOnLine(intersection.Position, el))
+                    {
+                        intersection.addLinks(el);
+                    }
+
+                }
+
+                if (!intersections.Contains(intersection))
+                {
+                    intersections.Add(intersection);
+                }
+                else
+                {
+                    intersections[intersections.IndexOf(intersection)].addLinks(intersection.Links);
+                }
+            }
+
+			List<Intersection> tempIntersections = new List<Intersection>();
+            foreach (var el in enclosingPolygon)
+            {
+                foreach (var i in intersections)
+                {
+					if (LineHelper.isPointOnLine(i.Position, el))
+                    {
+						var i1 = new Intersection(el[0]);
+						var i2 = new Intersection(el[1]);
+						i1.addLink(i.Position);
+						i2.addLink(i.Position);
+						tempIntersections.Add(i1);
+                        tempIntersections.Add(i2);
+
+                    }
+                }
+            }
+
+
+			foreach(var i in tempIntersections)
+			{
+				if (!intersections.Contains(i))
+				{
+					intersections.Add(i);
+				}
+				else
+				{
+					intersections[intersections.IndexOf(i)].addLinks(i.Links);
+				}
 			}
-		}
+        }
 
-		if(true)// if enclosing poly is used
-		{
-			localLines.AddRange(enclosingPolygon);
-		}
 
-		for (int i = 0; i < localLines.Count; i++)
+
+        for (int i = 0; i < localLines.Count; i++)
 		{
 			for (int j = 0; j < localLines.Count; j++)
 			{
@@ -143,6 +193,7 @@ public class PolygonDetectionAlgorithm : Node2D
 					{
 						intersection.addLink(localLines[j][1]);
 					}
+
 					if(!intersections.Contains(intersection))
 					{
 						intersections.Add(intersection);
@@ -155,10 +206,12 @@ public class PolygonDetectionAlgorithm : Node2D
 
 				}
 
-			}
-		}
-	//	findCycles();
-	}
+            }
+        }
+
+      
+        //	findCycles();
+    }
 
 	public Intersection getIntersectionWithPos(Vector2 pos)
 	{

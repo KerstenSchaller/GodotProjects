@@ -8,6 +8,17 @@ public static class VectorHelper
 	{
 		return (v1 - v2).Length() > 0.001;
 	}
+
+	public static float dotProduct(Vector2 v1, Vector2 v2)
+	{
+		return (v1.x*v2.x+v1.y*v2.y);
+	}
+
+	public static float crossProduct2D_z(Vector2 v1, Vector2 v2)
+	{	
+		// only z component of vcctor calculated since x and y are zero for 2D
+		return (v1.x*v2.y-v1.y*v2.x);
+	}
 }
 
 public static class LineHelper 
@@ -70,6 +81,41 @@ public static class LineHelper
 			isFilterSegmentOutlier = true;
 		}
 		return new Vector2((float)xIntersect, (float)yIntersect);
+	}
+
+	public static bool isPointOnLine(Vector2 point, List<Vector2> line)
+	{
+		// https://lucidar.me/en/mathematics/check-if-a-point-belongs-on-a-line-segment/
+		// check alignment 
+		var AB = (line[0] - line[1]);
+		var AC = (line[0] - point);
+		if(VectorHelper.crossProduct2D_z(AB, AC) > 0.01 )
+		{
+			// not aligned
+			return false;
+		}
+
+		// Check if point is on line 
+		var KAC = VectorHelper.dotProduct(AB,AC);
+		var KAB = VectorHelper.dotProduct(AB,AB); 
+
+		bool result = false;
+
+		// is not on the line 
+		if(KAC < 0)result = false;
+		if(KAC > KAB)result = false;
+
+		// concides with line ending
+		if(KAC == 0)result = false;
+		if(KAC == KAB)result = false;
+
+		// lies on line
+		if(KAC > 0 && KAC < KAB)result = true;
+
+		return result;
+
+
+
 	}
 
 

@@ -58,7 +58,7 @@ public class level : Node2D
 		{
 			limX = 1;
 			limY = 1;
-			patternSize = 550;
+			patternSize = 500;
 		}
 
 		for (int x = 0; x < limX ; x++)
