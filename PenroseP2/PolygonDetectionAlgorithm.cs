@@ -157,14 +157,14 @@ public class PolygonDetectionAlgorithm : Node2D
 
 			}
 		}
-		findCycles();
+	//	findCycles();
 	}
 
 	public Intersection getIntersectionWithPos(Vector2 pos)
 	{
 		foreach(var ints in intersections)
 		{
-			if(ints.Position == pos)return ints;
+			if((ints.Position - pos).Length() < 0.0001 )return ints;
 		}
 		return null;
 	}
@@ -178,7 +178,11 @@ public class PolygonDetectionAlgorithm : Node2D
 			currentCycle = new List<Intersection>();
 			foreach(var link in intersection.Links)
 			{
-				recurseLinks(getIntersectionWithPos(link), intersection);
+				var i = getIntersectionWithPos(link);
+				if(i != null)
+				{
+					recurseLinks(i, intersection);
+				}
 			}
 		}
 	}
@@ -206,7 +210,7 @@ public class PolygonDetectionAlgorithm : Node2D
 		foreach(var link in intersection.Links)
 		{
 			var intersectionLink = getIntersectionWithPos(link);
-			if(!intersectionLink.Equals(intersection))
+			if(!intersectionLink.Equals(origin))
 			{
 				// only recurse if link is not where we came from
 				recurseLinks(intersectionLink, intersection);
@@ -254,19 +258,28 @@ public class PolygonDetectionAlgorithm : Node2D
 	{
 		foreach(var p in intersections)
 		{
-			DrawCircle( p.Position ,5, Colors.Red);
+			DrawCircle( p.Position ,5, Colors.GreenYellow);
 		}
 
-        if (true)// print found polygons
+        if (false)// print found polygons
         {
 
             if (counter < 50)
             {
                 List<Vector2> cycle = new List<Vector2>();
-                foreach (var i in cycles[i])
-                {
-                    cycle.Add(i.Position);
-                }
+				if( i < cycles.Count)
+				{
+					foreach (var i in cycles[i])
+					{
+						cycle.Add(i.Position);
+						DrawCircle(i.Position,7, Colors.Green);
+					}
+
+				}
+				else
+				{
+					i = 0;
+				}
 
                 DrawPolygon(cycle.ToArray(), new List<Color> { Colors.DarkBlue }.ToArray());
                 counter++;
