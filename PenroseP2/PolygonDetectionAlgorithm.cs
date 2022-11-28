@@ -38,6 +38,26 @@ public class Intersection
 			}
 		}
 	}
+
+	public Vector2 getLowestAngleLink( bool excludeVector, Vector2 exVec = new Vector2())
+	{
+		Dictionary<float, Vector2> angleLinkD = new Dictionary<float, Vector2>();
+		float angle = 10f;
+		Vector2 retval = new Vector2();
+		foreach(var l in links)
+		{
+			if(excludeVector && VectorHelper.compareVectors(l,exVec))continue;
+			var AB = (this.position - l);
+			float tempAngle = VectorHelper.angleBetween(AB, exVec);
+			if(tempAngle < angle)
+			{
+				angle = tempAngle;
+				retval = l;
+			}
+		}
+
+		return retval;
+	}
 	
 
 	public override bool Equals(object obj)
@@ -210,7 +230,7 @@ public class PolygonDetectionAlgorithm : Node2D
         }
 
       
-        //	findCycles();
+        	findCycles();
     }
 
 	public Intersection getIntersectionWithPos(Vector2 pos)
@@ -227,8 +247,8 @@ public class PolygonDetectionAlgorithm : Node2D
 	{
 		cycles.Clear();
 		foreach(var intersection in intersections)
-		{
-			currentCycle = new List<Intersection>();
+        {
+            currentCycle = new List<Intersection>();
 			foreach(var link in intersection.Links)
 			{
 				var i = getIntersectionWithPos(link);
@@ -237,12 +257,48 @@ public class PolygonDetectionAlgorithm : Node2D
 					recurseLinks(i, intersection);
 				}
 			}
+        }
+
+		findUniqueCycles();
+	}
+
+	private void findUniqueCycles()
+	{
+		List<List<Intersection>> temp = new List<List<Intersection>>();
+		for(int i=0;i < cycles.Count;i++)
+		{
+			bool alreadyContained = false;
+			for(int j=0;j < temp.Count;j++)
+			{
+				//if(i==j)continue;
+				if(compareCycles(cycles[i],temp[j]))
+				{
+					alreadyContained = true;
+				}
+			}
+			if(alreadyContained == false)temp.Add(cycles[i]);
 		}
+		cycles = temp;
+
+	}
+
+
+	private bool compareCycles(List<Intersection> c1, List<Intersection> c2)
+	{
+
+		if(c1.Count != c2.Count)return false;
+		foreach(var i in c1)
+		{
+			if(!c2.Contains(i))return false;
+		}
+
+		return true;
 	}
 
 	Intersection currentIntersection;
 	List<List<Intersection>> cycles = new List<List<Intersection>>();
 	List<Intersection> currentCycle;
+
 	void recurseLinks(Intersection intersection, Intersection origin)
 	{
 		if(intersection == null){GD.Print("intersection == null");}

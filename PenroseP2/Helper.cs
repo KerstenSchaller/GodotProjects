@@ -6,7 +6,7 @@ public static class VectorHelper
 {
 	public static bool compareVectors(Vector2 v1, Vector2 v2)
 	{
-		return (v1 - v2).Length() > 0.001;
+		return (v1 - v2).Length() < 0.001;
 	}
 
 	public static float dotProduct(Vector2 v1, Vector2 v2)
@@ -19,12 +19,15 @@ public static class VectorHelper
 		// only z component of vcctor calculated since x and y are zero for 2D
 		return (v1.x*v2.y-v1.y*v2.x);
 	}
+
+	public static float angleBetween(Vector2 v1, Vector2 v2)
+	{
+		return (float)Math.Acos(dotProduct(v1,v2));
+	}
 }
 
 public static class LineHelper 
 {
-	
-
 	public static Vector2 calcIntersection(Vector2 p1, float angle1, Vector2 p2, float angle2)
 	{
 		bool dummy = false;
