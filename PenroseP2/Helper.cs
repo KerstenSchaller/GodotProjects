@@ -86,7 +86,7 @@ public static class LineHelper
 		return new Vector2((float)xIntersect, (float)yIntersect);
 	}
 
-	public static bool isPointOnLine(Vector2 point, List<Vector2> line)
+	public static bool isPointOnLine(Vector2 point, List<Vector2> line, bool isTrueOnLineEndings = false)
 	{
 		// https://lucidar.me/en/mathematics/check-if-a-point-belongs-on-a-line-segment/
 		// check alignment 
@@ -108,14 +108,26 @@ public static class LineHelper
 		if(KAC < 0)result = false;
 		if(KAC > KAB)result = false;
 
-		// concides with line ending
-		if(KAC == 0)result = false;
-		if(KAC == KAB)result = false;
+        // concides with line ending
+        if (KAC == 0)
+        {
 
-		// lies on line
-		if(KAC > 0 && KAC < KAB)result = true;
+            result = isTrueOnLineEndings;
+        }
+        if (KAC == KAB)
+        {
+            result = isTrueOnLineEndings;
+        }
 
-		return result;
+
+        // lies on line
+        if (KAC > 0 && KAC < KAB)
+        {
+            result = true;
+        }
+
+
+        return result;
 
 
 

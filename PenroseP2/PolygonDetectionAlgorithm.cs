@@ -117,8 +117,7 @@ public class PolygonDetectionAlgorithm : Node2D
 	//*******************************************************************************
 	//*******************************************************************************
 	
-	// 1. First we detect line segment intersections using the Bentley-Ottmann algorithm
-	// 2. Removing line segment intersections
+
 	public void detectIntersectionPoints(bool useHankin = true)
 	{
 		intersections.Clear();
@@ -229,8 +228,9 @@ public class PolygonDetectionAlgorithm : Node2D
             }
         }
 
+		GD.Print("Ended creating graph - Number of intersections: " + intersections.Count);
       
-        	findCycles();
+        findCycles();
     }
 
 	public Intersection getIntersectionWithPos(Vector2 pos)
@@ -245,6 +245,7 @@ public class PolygonDetectionAlgorithm : Node2D
 
 	void findCycles()
 	{
+		GD.Print("Start finding cycles -> Recurse through all intersections");
 		cycles.Clear();
 		foreach(var intersection in intersections)
         {
@@ -252,6 +253,7 @@ public class PolygonDetectionAlgorithm : Node2D
 			foreach(var link in intersection.Links)
 			{
 				var i = getIntersectionWithPos(link);
+				//currentCycle.Add(intersection);
 				if(i != null)
 				{
 					recurseLinks(i, intersection);
@@ -259,19 +261,90 @@ public class PolygonDetectionAlgorithm : Node2D
 			}
         }
 
+		GD.Print( cycles.Count + " Cycles found"); 
+		GD.Print( "Clearing duplicates" );
+
+		List<List<Intersection>> temp = new List<List<Intersection>>();
+        for (int i = 0; i < cycles.Count; i++)
+        {
+			List<Intersection> tempCycle = new List<Intersection>();
+            for (int j = 0; j < cycles[i].Count; j++)
+            {
+                if (i == j) continue;
+                if ( !tempCycle.Contains(cycles[i][j]))
+				{
+                	tempCycle.Add(cycles[i][j]);
+				}
+            }
+			//int c = cycles.Count-1;
+			//var range = cycles[i].GetRange(1,c);
+			temp.Add(tempCycle);
+        }
+		cycles = temp;
+
+
+
 		findUniqueCycles();
+		GD.Print( cycles.Count + " unique Cycles found"); 
+		sortOutOverlappingCycles();
+		GD.Print( cycles.Count + " Cycles found which doe not overlap"); 
+
+		GD.Print( cycles.Count + " Cycles found which doe not overlap"); 
 	}
+
+	Intersection currentIntersection;
+	List<List<Intersection>> cycles = new List<List<Intersection>>();
+	List<Intersection> currentCycle;
+
+    void recurseLinks(Intersection intersection, Intersection origin)
+    {
+		bool cycleFound = false;
+		if( currentCycle.Count > 1 )
+		{
+            var c = currentCycle.GetRange(1, currentCycle.Count - 1);
+            if (c.Contains(intersection))
+            {
+                if ( intersection == currentCycle[0])
+                {
+                    // cycle found
+                    cycles.Add(new List<Intersection>(currentCycle));
+                    return;
+                }
+				else
+				{
+					return;
+				}
+            }
+		}
+
+        currentCycle.Add(intersection);
+
+        // recurse again
+        foreach (var link in intersection.Links)
+        {
+            var intersectionLink = getIntersectionWithPos(link);
+            if (!intersectionLink.Equals(origin))
+            {
+                // only recurse if link is not where we came from
+                recurseLinks(intersectionLink, intersection);
+            }
+        }
+		
+        currentCycle.Remove(intersection);
+
+    }
+
 
 	private void findUniqueCycles()
 	{
 		List<List<Intersection>> temp = new List<List<Intersection>>();
-		for(int i=0;i < cycles.Count;i++)
+		for(int i=0;i < cycles.Count; i++)
 		{
 			bool alreadyContained = false;
 			for(int j=0;j < temp.Count;j++)
 			{
 				//if(i==j)continue;
-				if(compareCycles(cycles[i],temp[j]))
+				if(compareCycles(cycles[i], temp[j]))
 				{
 					alreadyContained = true;
 				}
@@ -281,6 +354,91 @@ public class PolygonDetectionAlgorithm : Node2D
 		cycles = temp;
 
 	}
+
+	private void sortOutOverlappingCycles()
+	{
+		List<List<Intersection>> temp = new List<List<Intersection>>();
+		for(int i = 0; i<cycles.Count;i++)
+        {
+            bool isOverlapping = false;
+            for (int j = 0; j < cycles.Count; j++)
+            {
+                if (i == j) continue;
+                foreach (var p in cycles[j])
+                {	
+					var cycle = cycles[i];
+					if(IsPointInPolygon(cycle, p))
+					{
+                    	isOverlapping = true;
+					}
+                }
+            }
+            if (isOverlapping == false)temp.Add(cycles[i]);
+		}
+		cycles = temp;
+
+		//var x = Geometry.SegmentIntersectsSegment2d(new Vector2(0,0), new Vector2(2,0),new Vector2(1,0), new Vector2(3,0));
+		//	var x = Geometry.SegmentIntersectsSegment2d(new Vector2(-1,0), new Vector2(1,0),new Vector2(0,-1), new Vector2(0,1));
+	}
+
+    private static bool IsPointInPolygon(List<Intersection> polygon, Intersection testPoint)
+    {
+		List<Vector2> temp = new List<Vector2>();
+		foreach(var p in polygon)
+		{
+			temp.Add(p.Position);
+		}
+		var isPointInOrOnPolygon = Geometry.IsPointInPolygon( testPoint.Position, temp.ToArray());
+		var pointIsOnLine = isPointInOrOnPolygon;
+		if(isPointInOrOnPolygon)
+		{
+			for(int i=0;i<temp.Count; i++)
+            {
+                var p11 = temp[i];
+                var p12 = i + 1 < temp.Count ? temp[i + 1] : temp[0];
+				List<Vector2> line = new List<Vector2>(){p11,p12};
+				var isOnLine = LineHelper.isPointOnLine(testPoint.Position, line, true);
+				if(isOnLine)
+				{
+					pointIsOnLine = false;
+				}
+            }
+		}
+		return pointIsOnLine;
+
+    }
+
+    private bool doPolygonsOverlap(List<Intersection> polygon1, List<Intersection> polygon2)
+    {
+        var l1 = new List<Vector2>();
+        var l2 = new List<Vector2>();
+        bool doOverlap = false;
+        for (int i = 0; i < polygon1.Count; i++)
+        {
+			var p11 = polygon1[i].Position;
+			var p12 = (i + 1 < polygon1.Count) ? polygon1[i+1].Position : polygon1[0].Position;
+            for (int j = 0; j < polygon2.Count; j++)
+            {
+				var p21 = polygon2[j].Position;
+				var p22 = (j + 1 < polygon2.Count) ? polygon2[j+1].Position : polygon2[0].Position;
+                if (Geometry.SegmentIntersectsSegment2d(p11,p12,p21,p22) != null)
+                {
+                    doOverlap = true;
+                }
+				if(p11 == p21 || p11 == p22 || p21 == p21 || p21 == p22)
+				{
+					doOverlap = false;
+				}
+            }
+
+
+        }
+
+
+        return doOverlap;
+    }
+
+
 
 
 	private bool compareCycles(List<Intersection> c1, List<Intersection> c2)
@@ -295,41 +453,7 @@ public class PolygonDetectionAlgorithm : Node2D
 		return true;
 	}
 
-	Intersection currentIntersection;
-	List<List<Intersection>> cycles = new List<List<Intersection>>();
-	List<Intersection> currentCycle;
-
-	void recurseLinks(Intersection intersection, Intersection origin)
-	{
-		if(intersection == null){GD.Print("intersection == null");}
-
-		if(currentCycle.Contains(intersection))
-		{
-			// cycle found
-			cycles.Add(new List<Intersection>(currentCycle));
-			return;
-		}
-		else
-		{
-			currentCycle.Add(intersection);
-		}
-
-
-		// recurse again
-		foreach(var link in intersection.Links)
-		{
-			var intersectionLink = getIntersectionWithPos(link);
-			if(!intersectionLink.Equals(origin))
-			{
-				// only recurse if link is not where we came from
-				recurseLinks(intersectionLink, intersection);
-			} 
-		}
-
-		currentCycle.Remove(intersection);
-
-	}
-
+	
 
 	//*******************************************************************************
 	//*******************************************************************************
