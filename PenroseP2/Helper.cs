@@ -11,13 +11,15 @@ public static class VectorHelper
 
 	public static float dotProduct(Vector2 v1, Vector2 v2)
 	{
-		return (v1.x*v2.x+v1.y*v2.y);
+		//return (v1.x*v2.x+v1.y*v2.y);
+		return v1.Dot(v2);
 	}
 
 	public static float crossProduct2D_z(Vector2 v1, Vector2 v2)
 	{	
 		// only z component of vcctor calculated since x and y are zero for 2D
-		return (v1.x*v2.y-v1.y*v2.x);
+		//return (v1.x*v2.y-v1.y*v2.x);
+		return v1.Cross(v1);
 	}
 
 	public static float angleBetween(Vector2 v1, Vector2 v2)
@@ -90,9 +92,10 @@ public static class LineHelper
 	{
 		// https://lucidar.me/en/mathematics/check-if-a-point-belongs-on-a-line-segment/
 		// check alignment 
-		var AB = (line[0] - line[1]);
-		var AC = (line[0] - point);
-		if(VectorHelper.crossProduct2D_z(AB, AC) > 0.01 )
+		var AB = (line[1] - line[0]);
+		var AC = (point - line[0]);
+		var c = AB.Cross(AC);
+		if(c > 0.01 || c < -0.01 )
 		{
 			// not aligned
 			return false;

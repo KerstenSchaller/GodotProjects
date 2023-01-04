@@ -377,22 +377,26 @@ public class PolygonDetectionAlgorithm : Node2D
 	private List<List<Intersection>> sortOutOverlappingCycles(List<List<Intersection>> cycles)
 	{
 		List<List<Intersection>> temp = new List<List<Intersection>>();
-		for(int i = 0; i<cycles.Count;i++)
+		for (int i = 0; i < cycles.Count; i++)
 		{
 			bool isOverlapping = false;
 			for (int j = 0; j < cycles.Count; j++)
 			{
 				if (i == j) continue;
 				foreach (var p in cycles[j])
-				{	
+				{
 					var cycle = cycles[i];
-					if(IsPointInPolygon(cycle, p))
+					if (IsPointInPolygon(cycle, p))
 					{
 						isOverlapping = true;
 					}
 				}
 			}
-			if (isOverlapping == false)temp.Add(cycles[i]);
+			if (isOverlapping == false)
+			{
+				temp.Add(cycles[i]);
+			} 
+				
 		}
 		return temp;
 
@@ -401,27 +405,34 @@ public class PolygonDetectionAlgorithm : Node2D
 	private static bool IsPointInPolygon(List<Intersection> polygon, Intersection testPoint)
 	{
 		List<Vector2> temp = new List<Vector2>();
-		foreach(var p in polygon)
+		foreach (var p in polygon)
 		{
 			temp.Add(p.Position);
 		}
-		var isPointInOrOnPolygon = Geometry.IsPointInPolygon( testPoint.Position, temp.ToArray());
-		var pointIsOnLine = isPointInOrOnPolygon;
-		if(isPointInOrOnPolygon)
+		var isPointInOrOnPolygon = Geometry.IsPointInPolygon(testPoint.Position, temp.ToArray());
+		var result = isPointInOrOnPolygon;
+		if (isPointInOrOnPolygon)
 		{
-			for(int i=0;i<temp.Count; i++)
+			for (int i = 0; i < temp.Count; i++)
 			{
 				var p11 = temp[i];
 				var p12 = i + 1 < temp.Count ? temp[i + 1] : temp[0];
-				List<Vector2> line = new List<Vector2>(){p11,p12};
+				List<Vector2> line = new List<Vector2>() { p11, p12 };
 				var isOnLine = LineHelper.isPointOnLine(testPoint.Position, line, true);
-				if(isOnLine)
+				if (isOnLine)
 				{
-					pointIsOnLine = false;
+					result = false;
 				}
 			}
 		}
-		return pointIsOnLine;
+
+		// test linehelper
+		var tp11 = new Vector2(0,250);
+		var tp12 = new Vector2(0,500);
+
+		var res5 = LineHelper.isPointOnLine(new Vector2(297.4965f, 297.4965f), new List<Vector2>() { tp11, tp12 }, true);
+
+		return result;
 
 	}
 
@@ -521,7 +532,7 @@ public class PolygonDetectionAlgorithm : Node2D
 			//var targetPolyList = uniqueCycles;
 			
 
-			var index = (polyIndex > targetPolyList.Count) ? polyIndex : targetPolyList.Count; 
+			var index = (polyIndex > targetPolyList.Count) ? polyIndex : targetPolyList.Count -1; 
 			foreach (var i in targetPolyList[polyIndex])
 			{
 				cycle.Add(i.Position);
