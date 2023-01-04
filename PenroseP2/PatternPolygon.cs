@@ -10,6 +10,9 @@ public class PatternPolygon : Node2D
 
 	PolygonDetectionAlgorithm polyAlgo = new PolygonDetectionAlgorithm();
 
+
+	public int PolyIndex{set{ polyAlgo.PolyIndex =  value;}}
+
 	float hankinsAngle = 0f;
 	public float Angle
 	{

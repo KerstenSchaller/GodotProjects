@@ -6,9 +6,12 @@ public class SquarePatternTile : Node2D
 {
 	
 	PatternPolygon patternPoly = new PatternPolygon();
+
 	
 	public float Offset{set{ patternPoly.Offset =  value;}}
 	public float Angle{set{ patternPoly.Angle =  value;}}
+
+	public int PolyIndex{set{ patternPoly.PolyIndex =  value;}}
 
 	public void init(float size)
 	{

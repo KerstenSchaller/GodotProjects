@@ -42,6 +42,21 @@ public class level : Node2D
 		}
 	}
 
+	int polyIndex = 0;
+	[Export(PropertyHint.Range, "0,1000,1")]
+	public int PolyIndex
+	{
+		get { return polyIndex; }
+		set
+		{
+			polyIndex = value;
+			foreach(var p in polygons)
+			{
+				p.PolyIndex = value;
+			}
+		}
+	}
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
